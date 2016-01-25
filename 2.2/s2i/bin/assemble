@@ -37,6 +37,12 @@ if [ -f Gemfile ]; then
   echo "---> Running 'bundle install ${ADDTL_BUNDLE_ARGS}' ..."
   bundle install --path ./bundle ${ADDTL_BUNDLE_ARGS}
 
+echo "===Cgroup info==="
+cat /sys/fs/cgroup/memory/memory.limit_in_bytes
+cat /sys/fs/cgroup/cpu,cpuacct/cpu.shares
+cat /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us
+cat /sys/fs/cgroup/cpuacct,cpu/cpu.cfs_quota_us
+
   echo "---> Cleaning up unused ruby gems ..."
   bundle clean -V
 fi
@@ -57,12 +63,6 @@ fix-permissions ./
 # it to store temporary data (uploads/cache/sessions/etcd).
 # The ./db folder has to be writeable as well because when Rails complete the
 # migration it writes the schema version into ./db/schema.db
-
-echo "===Cgroup info==="
-cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-cat /sys/fs/cgroup/cpu,cpuacct/cpu.shares
-cat /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us
-cat /sys/fs/cgroup/cpuacct,cpu/cpu.cfs_quota_us
 
 set +e
 [[ -d ./tmp ]] && chgrp -R 0 ./tmp && chmod -R g+rw ./tmp
